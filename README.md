@@ -1,117 +1,118 @@
-# Qualidade do Vinho Tinto em R | Fatores Físico-Químicos
+# Red Wine Quality in R | Physicochemical Drivers
 
-Análise reproduzível de **1.599 vinhos tintos** portugueses (Vinho Verde) para perceber que
-propriedades químicas acompanham as melhores notas de prova.
+Reproducible analysis of **1,599 Portuguese red wines** (Vinho Verde) to identify which chemical
+properties track the highest tasting scores.
 
-**Stack:** R 4.5.2 · apenas R base · sem dependências externas
+**Stack:** R 4.5.2 · base R only · no external dependencies
 
 ---
 
-## Resultado principal
+## Headline finding
 
-> **O álcool é o que mais acompanha a qualidade (r = +0,48). A acidez volátil é o que mais a
-> penaliza (r = −0,39).** Nenhuma outra variável passa de ±0,26.
+> **Alcohol tracks quality most strongly (r = +0.48). Volatile acidity penalises it most
+> (r = −0.39).** No other variable exceeds ±0.26.
 
-![Correlação com a qualidade](06_GRAFICOS/correlation_with_quality.png)
+![Correlation with quality](06_GRAFICOS/correlation_with_quality.png)
 
-| Variável | Correlação com a qualidade |
+| Variable | Correlation with quality |
 |---|---:|
-| Álcool | **+0,476** |
-| Acidez volátil | **−0,391** |
-| Sulfatos | +0,251 |
-| Ácido cítrico | +0,226 |
-| Dióxido de enxofre total | −0,185 |
-| Densidade | −0,175 |
-| Cloretos | −0,129 |
-| Acidez fixa | +0,124 |
-| pH | −0,058 |
-| Dióxido de enxofre livre | −0,051 |
-| Açúcar residual | +0,014 |
+| Alcohol | **+0.476** |
+| Volatile acidity | **−0.391** |
+| Sulphates | +0.251 |
+| Citric acid | +0.226 |
+| Total sulfur dioxide | −0.185 |
+| Density | −0.175 |
+| Chlorides | −0.129 |
+| Fixed acidity | +0.124 |
+| pH | −0.058 |
+| Free sulfur dioxide | −0.051 |
+| Residual sugar | +0.014 |
 
-O perfil médio confirma-o de forma direta:
+The average profile confirms it directly:
 
-| Grupo de qualidade | Vinhos | Álcool | Acidez volátil | Sulfatos | Ácido cítrico |
+| Quality group | Wines | Alcohol | Volatile acidity | Sulphates | Citric acid |
 |---|---:|---:|---:|---:|---:|
-| Baixa (3–5) | 744 | 9,93 | 0,590 | 0,619 | 0,238 |
-| Média (6) | 638 | 10,63 | 0,497 | 0,675 | 0,274 |
-| Alta (7–8) | 217 | **11,52** | **0,406** | 0,743 | 0,376 |
+| Low (3-5) | 744 | 9.93 | 0.590 | 0.619 | 0.238 |
+| Medium (6) | 638 | 10.63 | 0.497 | 0.675 | 0.274 |
+| High (7-8) | 217 | **11.52** | **0.406** | 0.743 | 0.376 |
 
-![Álcool por nota de qualidade](06_GRAFICOS/alcohol_by_quality.png)
+![Alcohol by quality score](06_GRAFICOS/alcohol_by_quality.png)
 
-## O problema que os números escondem
+## The problem the numbers hide
 
-**82,5% dos vinhos têm nota 5 ou 6.** As notas extremas quase não existem: 10 vinhos com 3 e
-18 com 8, em 1.599.
+**82.5% of the wines score 5 or 6.** The extremes barely exist: 10 wines at 3 and 18 at 8,
+out of 1,599.
 
-| Nota | Vinhos | % |
+| Score | Wines | % |
 |---:|---:|---:|
-| 3 | 10 | 0,6% |
-| 4 | 53 | 3,3% |
-| 5 | 681 | 42,6% |
-| 6 | 638 | 39,9% |
-| 7 | 199 | 12,4% |
-| 8 | 18 | 1,1% |
+| 3 | 10 | 0.6% |
+| 4 | 53 | 3.3% |
+| 5 | 681 | 42.6% |
+| 6 | 638 | 39.9% |
+| 7 | 199 | 12.4% |
+| 8 | 18 | 1.1% |
 
-![Distribuição das notas](06_GRAFICOS/quality_distribution.png)
+![Quality distribution](06_GRAFICOS/quality_distribution.png)
 
-Isto tem consequências práticas: qualquer modelo treinado neste dataset vai acertar muito nas
-notas 5 e 6 e falhar precisamente nos vinhos que interessa distinguir — os excelentes e os maus.
-As correlações acima são calculadas sobre uma amostra concentrada no meio da escala e não devem
-ser extrapoladas para os extremos.
+This has practical consequences: any model trained on this dataset will do well on scores 5 and 6
+and fail precisely on the wines worth distinguishing, the excellent and the poor. The correlations
+above are computed on a sample concentrated in the middle of the scale and should not be
+extrapolated to the extremes.
 
-## Decisão metodológica: os 240 duplicados foram mantidos
+## Methodological decision: the 240 duplicates were kept
 
-O dataset tem **240 linhas exatamente iguais a outras**. Não foram removidas.
+The dataset contains **240 rows identical to other rows**. They were not removed.
 
-Não existe identificador de amostra. Duas linhas idênticas podem ser um erro de registo — ou dois
-vinhos diferentes com as mesmas 12 medições, o que é perfeitamente possível com valores
-arredondados a uma ou duas casas decimais. Remover não é a opção conservadora: seria assumir um
-erro que nada prova. Os duplicados ficam quantificados em `07_TABELAS/validacao_limpeza.csv`
-para que quem reutilize os dados possa decidir de forma informada.
+There is no sample identifier. Two identical rows may be a data-entry error, or two different
+wines with the same twelve measurements, which is entirely possible with values rounded to one or
+two decimal places. Removing them is not the conservative option: it would assume an error that
+nothing proves. The duplicates are quantified in `07_TABELAS/validacao_limpeza.csv` so that
+anyone reusing the data can decide with full information.
 
-## Método
+## Method
 
-1. **Importação** — CSV original lido de `01_DADOS_BRUTOS`, sem alteração.
-2. **Inspeção** — dimensões, valores em falta e duplicados exatos medidos antes da limpeza.
-3. **Limpeza** — nomes normalizados para *snake_case*.
-4. **Transformação** — criação de `quality_group` (baixa 3–5 / média 6 / alta 7–8).
-5. **Validação** — registo de qualidade em `07_TABELAS/validacao_limpeza.csv`.
-6. **Análise, gráficos e exportação.**
+1. **Import** — original CSV read from `01_DADOS_BRUTOS`, unchanged.
+2. **Inspect** — dimensions, missing values and exact duplicates measured before cleaning.
+3. **Clean** — column names normalised to snake_case.
+4. **Transform** — derive `quality_group` (low 3-5 / medium 6 / high 7-8).
+5. **Validate** — quality record written to `07_TABELAS/validacao_limpeza.csv`.
+6. **Analyse, plot and export.**
 
-**Qualidade dos dados:** 1.599 linhas → 1.599 linhas · 0 valores em falta · **240 duplicados
-exatos, mantidos** · 0 linhas removidas.
+**Data quality:** 1,599 rows to 1,599 rows · 0 missing values · **240 exact duplicates, kept** ·
+0 rows removed.
 
-## Reproduzir
+## Reproduce
 
 ```bash
 Rscript 04_SCRIPTS_R/09_executar_pipeline.R
 ```
 
-## Estrutura
+## Structure
 
 ```
-01_DADOS_BRUTOS/    CSV original, imutável
-03_DADOS_LIMPOS/    dados tratados, gerados pelo pipeline
-04_SCRIPTS_R/       9 etapas, uma por ficheiro
-05_NOTEBOOKS/       notebook R Markdown para Kaggle
-06_GRAFICOS/        gráficos PNG
-07_TABELAS/         tabelas de resultados em CSV
-09_DOCUMENTACAO/    dicionário de dados e dependências
+01_DADOS_BRUTOS/    raw data, immutable
+03_DADOS_LIMPOS/    cleaned data, pipeline output
+04_SCRIPTS_R/       9 stages, one per file
+05_NOTEBOOKS/       R Markdown notebook for Kaggle
+06_GRAFICOS/        PNG charts
+07_TABELAS/         result tables as CSV
+09_DOCUMENTACAO/    data dictionary and dependencies
 ```
 
-## Limitações
+## Limitations
 
-Correlação não é causalidade, e aqui a advertência é concreta: aumentar o álcool de um vinho não
-o torna melhor. É mais plausível que uvas mais maduras produzam simultaneamente mais álcool e
-melhor vinho — o álcool seria então um indicador de maturação, não a causa da qualidade. A
-concentração da amostra nas notas 5 e 6 limita ainda mais qualquer generalização.
+Correlation is not causation, and here the warning is concrete: raising the alcohol content of a
+wine does not make it better. It is more plausible that riper grapes produce both more alcohol and
+better wine, which would make alcohol a marker of ripeness rather than the cause of quality. The
+concentration of the sample in scores 5 and 6 further limits any generalisation.
 
-## Dados
+## Data
 
-Wine Quality (vinho tinto) — Cortez, Cerdeira, Almeida, Matos e Reis, Universidade do Minho,
-publicado no UCI Machine Learning Repository. Amostras de Vinho Verde do noroeste de Portugal.
-O CSV original está em `01_DADOS_BRUTOS` sem alterações.
+Wine Quality (red) — Cortez, Cerdeira, Almeida, Matos and Reis, University of Minho, published in
+the UCI Machine Learning Repository. Vinho Verde samples from north-west Portugal.
+The original CSV sits unchanged in `01_DADOS_BRUTOS`.
 
-## Licença
+## Licence
 
-Código sob licença MIT (ver `LICENSE`). O dataset mantém os termos da fonte original (UCI, CC BY 4.0).
+Code released under the MIT Licence (see `LICENSE`). The dataset keeps the terms of its original
+source (UCI, CC BY 4.0).
