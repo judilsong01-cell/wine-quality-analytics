@@ -1,0 +1,12 @@
+"variable","correlation_with_quality"
+"alcohol",0.476166324001136
+"volatile_acidity",-0.390557780264007
+"sulphates",0.251397079069261
+"citric_acid",0.226372514318041
+"total_sulfur_dioxide",-0.185100288926538
+"density",-0.17491922778335
+"chlorides",-0.128906559930053
+"fixed_acidity",0.124051649113224
+"p_h",-0.0577313912053821
+"free_sulfur_dioxide",-0.0506560572442764
+"residual_sugar",0.0137316373400663

@@ -1,2 +1,2 @@
-"linhas_brutas","linhas_limpas","colunas","ausentes","duplicados_removidos"
-1599,1359,13,0,240
+"raw_rows","clean_rows","columns","exact_duplicate_rows","rows_removed","missing_cells_raw","missing_cells_clean"
+1599,1599,13,240,0,0,0
